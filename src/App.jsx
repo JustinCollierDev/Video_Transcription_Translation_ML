@@ -7,12 +7,13 @@
 import { useState } from 'react'
 import HomePage from './components/HomePage'
 import Header from './components/Header'
+import Footer from './components/Footer'
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <div className='flex flex-col max-w-[1000px] mx-auto w-full'>
+    <div className='flex flex-col max-w-[1920px] mx-auto w-full'>
       <section className='min-h-screen flex flex-col'>
         
         {/* Our Header and Main tags are held within these two .jsx files that we function call*/}
@@ -21,9 +22,7 @@ function App() {
 
       </section>
 
-      <footer>
-
-      </footer>
+      <Footer />
     </div>
   )
 }
