@@ -6,6 +6,13 @@
     font-family: 'Open Sans', sans-serif;
 }
 
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* This makes the container take the full viewport height */
+}
+
 h1, h2, h3, .bold {
     font-family: 'Radio Canada Big', sans-serif;
 }

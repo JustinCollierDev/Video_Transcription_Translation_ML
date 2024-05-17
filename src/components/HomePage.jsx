@@ -1,9 +1,24 @@
-import React, {useState, useEffect, useRef} from 'react'
+import React, {useState, useEffect, useRef, useCallback} from 'react'
+import { TextBox } from 'devextreme-react/text-box';
+import 'devextreme/dist/css/dx.light.css';
+import { Center } from 'devextreme-react/cjs/map';
 
 // Home page for QuickScript
 export default function HomePage(props) {
 
   const {setAudioStream, setAudioFile} = props
+
+  // Variable for TextBox
+  
+  const [value, setValue] = useState("");
+
+  const onValueChange = useCallback((v) => {
+        setValue(v)
+    }, []);
+
+  const onEnterKey = useCallback(() => {
+        console.log(value)
+    }, [value]);
 
   // Variables for handling recording from an input device
   const [recordingStatus, setRecordingStatus] = useState('inactive')
@@ -98,8 +113,27 @@ export default function HomePage(props) {
         <h3 className='font-medium md:text-lg'>Upload <span className='text-red-300'> <i className="fa-solid fa-upload"></i></span>
             <span className='font-medium md:text-lg'> &rarr;</span>
             {" "}Transcribe <span className='text-red-300'> <i className="fa-solid fa-pen-nib"> </i> </span> <span className='font-medium md:text-lg'> &rarr;</span>
-            {" "}Translate <span className='text-red-300'> <i className="fa-solid fa-earth-americas"></i></span>
+            {" "}Download <span className='text-red-300'> <i class="fa-solid fa-file-arrow-down"></i></span>
         </h3>
+
+        <h3 className='font-small md:text-sm'> Create fast and easy subtitles for your videos</h3>
+        <br/>
+
+        <div>
+        <button className='text-blue cursor-pointer hover:text-red-300 duration-200'>
+            Enter <i class="fa-brands fa-youtube"></i> Youtube URL
+        </button>
+            <TextBox 
+                className='flex flex-col gap-3 text-center sm:gap-4 justify-center'
+                value={value}
+                valueChangeEvent="input"
+                onValueChange={onValueChange}
+                onEnterKey={onEnterKey}
+                style={{ width: '60%' }} // Adjust the width as needed
+                
+            />
+        </div>
+        
 
         <label className='text-blue cursor-pointer hover:text-red-300 duration-200'>
             Upload File <i className="fa-solid fa-upload"></i>

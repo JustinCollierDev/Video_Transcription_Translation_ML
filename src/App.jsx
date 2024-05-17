@@ -85,7 +85,7 @@ function App() {
     const model_name = 'openai/whisper-tiny.en'
 
     worker.current.postMessage({
-      type:MessageTypes.Inference_Request,
+      type:MessageTypes.INFERENCE_REQUEST,
       audio,
       model_name
     })
