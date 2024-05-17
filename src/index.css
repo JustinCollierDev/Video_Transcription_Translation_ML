@@ -37,6 +37,7 @@ h1, h2, h3, .bold {
     animation-delay: -2s;
   }
   
+  /* Animation for transcription loading bars */
   @keyframes width {
     0%{width: 100%;}
     10%{width: 73%;}

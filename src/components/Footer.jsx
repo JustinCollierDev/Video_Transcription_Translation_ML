@@ -47,7 +47,7 @@ const Footer = memo(() => {
       </MDBContainer>
 
       <div className='text-center p-3' style={{ backgroundColor: 'rgba(1, 0, 0, 0.2)' }}>
-        Justin Collier - Portfolio Project - 2024
+        Justin Collier - Personal Portfolio Project - 2024
       </div>
     </MDBFooter>
   )

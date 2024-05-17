@@ -4,11 +4,13 @@
 //          and transcribes the speech-based audio into a raw-text transcript.
 //
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import HomePage from './components/HomePage'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import FileDisplay from './components/FileDisplay'
+import Information from './components/Information'
+import Transcribing from './components/Transcribing'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -16,12 +18,20 @@ function App() {
   /* Constants for provided file OR recording*/
   const [file, setAudioFile] = useState(null)
   const [audioStream, setAudioStream] = useState(null)
+  const [output, setOutput] = useState(null)
+  const [loading, setLoading] = useState(false)
+
   const isAudioAvailable = file || audioStream
 
   function handleAudioReset() {
     setAudioFile(null)
-    setAudioStream()
-  }null
+    setAudioStream(null)
+  }
+
+  useEffect(() => {
+    console.log(audioStream)
+  }), [audioStream]
+
 
   return (
     <div className='flex flex-col max-w-[1920px] mx-auto w-full'>
@@ -29,8 +39,10 @@ function App() {
         
         {/* Our Header and Main tags are held within these two .jsx files that we function call*/}
         <Header />
-        
-        {isAudioAvailable ? (<FileDisplay handleAudioReset={handleAudioReset} file={file} audioStream={setAudioStream}/>) : (<HomePage setAudioFile={setAudioFile} setAudioStream={setAudioStream}/>)}
+        {output ? (<Information/>) : 
+        loading ? (<Transcribing/>) : 
+        isAudioAvailable ? (<FileDisplay handleAudioReset={handleAudioReset} file={file} audioStream={setAudioStream}/>) : 
+        (<HomePage setAudioFile={setAudioFile} setAudioStream={setAudioStream}/>)}
 
       </section>
 

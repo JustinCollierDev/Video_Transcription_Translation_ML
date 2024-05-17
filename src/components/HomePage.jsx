@@ -5,12 +5,13 @@ export default function HomePage(props) {
 
   const {setAudioStream, setAudioFile} = props
 
-  // Variables for handling a recording state
-  const [recordingStatus, setRecordingState] = useState('inactive')
+  // Variables for handling recording from an input device
+  const [recordingStatus, setRecordingStatus] = useState('inactive')
   const [audioChunks, setAudioChunks] = useState([])
-  const [duraction, setDuration] = useState(0)
+  const [duration, setDuration] = useState(0)
 
   const mediaRecorder = useRef(null)
+
   const mimeType = 'audio/webm'
 
   // Function: Handles when the user clicks the 'recording' button to create their own audio input.
@@ -82,12 +83,15 @@ export default function HomePage(props) {
           setDuration(curr => curr + 1)
       }, 1000) // 1000ms == 1 second
 
+      // Clear the clock.
       return () => clearInterval(interval)
   })
 
+
+
   // Main Form
   return (
-    <main className='flex-1 p-4 flex flex-col gap-3 text-center sm:gap-4 md:gap-5 justify-center pb-20'>
+    <main className='flex-1 p-4 flex flex-col gap-3 text-center sm:gap-4 justify-center pb-20'>
         
         <h1 className='font-semibold text-5xl sm:text-6l md:text-7xl'>Quick<span className='text-red-300 bold'>Script</span></h1>
     
@@ -108,12 +112,17 @@ export default function HomePage(props) {
         
         <p className='text-base my-4'> Or </p>
 
-        <button className='flex specialBtn px-4 py-2 rounded-xl items-center text-base justify-between gap-4 mx-auto w-72 max-w-full'>
-          <p className='font-sm text-red-300 text-center'>Record your voice</p>
-          <div className='flex items-center gap-2'>
-            <i className="fa-solid fa-microphone"></i>
-          </div>
-        </button>
+        <button onClick={recordingStatus === 'recording' ? stopRecording : startRecording} className='flex specialBtn px-4 py-2 rounded-xl items-center text-base justify-between gap-4 mx-auto w-72 max-w-full my-4'>
+                <p className='text-red-300'>{recordingStatus === 'inactive' ? 'Record your voice' : `Stop recording`}</p>
+                <div className='flex items-center gap-2'>
+                    
+                    {duration !== 0 && (
+                        <p className='text-sm'>{duration}s</p>
+                    )} 
+                    
+                    <i className={"fa-solid duration-200 fa-microphone " + (recordingStatus === 'recording' ? ' text-blue-400' : "")}></i>
+                </div>
+            </button>
 
         <p className='italic text-slate-500'>Currently supporting <span className='text-red-300'>[ .mp4, .mp3, .wav ]</span></p>
 
