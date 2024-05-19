@@ -10,7 +10,7 @@ export default function FileDisplay(props) {
             console.log('HERE FILE', file)
             audioRef.current.src = URL.createObjectURL(file)
         } else {
-            console.log('EHER AUDIO', audioStream)
+            console.log('HERE AUDIO', audioStream)
             audioRef.current.src = URL.createObjectURL(audioStream)
         }
     }, [audioStream, file])

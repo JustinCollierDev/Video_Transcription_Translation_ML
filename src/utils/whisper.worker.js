@@ -1,9 +1,9 @@
-import {pipeline} from '@xenova/transformers'
+import { pipeline } from '@xenova/transformers'
 import { MessageTypes } from './presets'
 
 class MyTranscriptionPipeline {
     static task = 'automatic-speech-recognition'
-    static model = 'openai/whisper-tine.en'
+    static model = 'openai/whisper-tiny.en'
     static instance = null
 
     static async getInstance(progress_callback = null) {
@@ -15,9 +15,8 @@ class MyTranscriptionPipeline {
     }
 }
 
-// Receives the message sent from our App.jsx
 self.addEventListener('message', async (event) => {
-    const {type, audio} = event.data
+    const { type, audio } = event.data
     if (type === MessageTypes.INFERENCE_REQUEST) {
         await transcribe(audio)
     }
@@ -31,7 +30,6 @@ async function transcribe(audio) {
     try {
         pipeline = await MyTranscriptionPipeline.getInstance(load_model_callback)
     } catch (err) {
-        // Log the error
         console.log(err.message)
     }
 
@@ -40,6 +38,7 @@ async function transcribe(audio) {
     const stride_length_s = 5
 
     const generationTracker = new GenerationTracker(pipeline, stride_length_s)
+    
     await pipeline(audio, {
         top_k: 0,
         do_sample: false,
@@ -51,7 +50,6 @@ async function transcribe(audio) {
     })
     generationTracker.sendFinalResult()
 }
-
 
 async function load_model_callback(data) {
     const { status } = data
@@ -83,7 +81,7 @@ class GenerationTracker {
         this.pipeline = pipeline
         this.stride_length_s = stride_length_s
         this.chunks = []
-        this.time_precision = pipeline?.processor.feature_extractor.config.chunk_length / pipeline.model.config.max_source_positions
+        this.time_precision = pipeline?.processor.feature_extractor.config.chunk_length / self.model.config.max_source_positions
         this.processed_chunks = []
         this.callbackFunctionCounter = 0
     }

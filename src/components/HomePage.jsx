@@ -6,7 +6,7 @@ import { Center } from 'devextreme-react/cjs/map';
 // Home page for QuickScript
 export default function HomePage(props) {
 
-  const {setAudioStream, setAudioFile} = props
+  const {setAudioStream, setFile} = props
 
   // Variable for TextBox
   
@@ -119,6 +119,8 @@ export default function HomePage(props) {
         <h3 className='font-small md:text-sm'> Create fast and easy subtitles for your videos</h3>
         <br/>
 
+        {/* Youtube Text Bar */}
+        {/*
         <div>
         <button className='text-blue cursor-pointer hover:text-red-300 duration-200'>
             Enter <i class="fa-brands fa-youtube"></i> Youtube URL
@@ -133,6 +135,7 @@ export default function HomePage(props) {
                 
             />
         </div>
+        */}
         
 
         <label className='text-blue cursor-pointer hover:text-red-300 duration-200'>
@@ -140,12 +143,12 @@ export default function HomePage(props) {
 
             <input onChange={(e) =>{
               const tempFile = e.target.files[0]
-                setAudioFile(tempFile)
+                setFile(tempFile)
             }} className='hidden' type='file' accept='.mp3,.wave,.mp4'/>
         </label>
-        
-        <p className='text-base my-4'> Or </p>
 
+        {/* Recording Input */}
+        {/* 
         <button onClick={recordingStatus === 'recording' ? stopRecording : startRecording} className='flex specialBtn px-4 py-2 rounded-xl items-center text-base justify-between gap-4 mx-auto w-72 max-w-full my-4'>
                 <p className='text-red-300'>{recordingStatus === 'inactive' ? 'Record your voice' : `Stop recording`}</p>
                 <div className='flex items-center gap-2'>
@@ -157,9 +160,9 @@ export default function HomePage(props) {
                     <i className={"fa-solid duration-200 fa-microphone " + (recordingStatus === 'recording' ? ' text-blue-400' : "")}></i>
                 </div>
             </button>
-
+        */}
+        
         <p className='italic text-slate-500'>Currently supporting <span className='text-red-300'>[ .mp4, .mp3, .wav ]</span></p>
-
         <br/><br/><br/><br/><br/>
         
 
