@@ -9,9 +9,6 @@ import { Transcriber } from "../hooks/useTranscriber";
 import Progress from "./Progress";
 import AudioRecorder from "./AudioRecorder";
 
-// YouTube conversion imports
-
-
 function titleCase(str: string) {
     str = str.toLowerCase();
     return (str.match(/\w+.?/g) || [])
@@ -198,8 +195,6 @@ export function AudioManager(props: { transcriber: Transcriber }) {
         fileReader.readAsArrayBuffer(data);
     };
 
-
-    // Downloading via URL, or in our case, YouTube link
     const downloadAudioFromUrl = async (
         requestAbortController: AbortController,
     ) => {
@@ -222,7 +217,6 @@ export function AudioManager(props: { transcriber: Transcriber }) {
                 if (!mimeType || mimeType === "audio/wave") {
                     mimeType = "audio/wav";
                 }
-                
                 setAudioFromDownload(data, mimeType);
             } catch (error) {
                 console.log("Request failed or aborted", error);
@@ -249,7 +243,7 @@ export function AudioManager(props: { transcriber: Transcriber }) {
                 <div className='flex flex-row space-x-2 py-2 w-full px-2'>
                     <UrlTile
                         icon={<AnchorIcon />}
-                        text={"YouTube URL"}
+                        text={"From URL"}
                         onUrlUpdate={(e) => {
                             props.transcriber.onInputChange();
                             setAudioDownloadUrl(e);
