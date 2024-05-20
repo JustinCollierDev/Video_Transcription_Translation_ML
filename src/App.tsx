@@ -2,31 +2,36 @@ import { AudioManager } from "./components/AudioManager";
 import Transcript from "./components/Transcript";
 import { useTranscriber } from "./hooks/useTranscriber";
 
+import Header from './components/header'
+import Footer from './components/footer'
+
 function App() {
     const transcriber = useTranscriber();
 
     return (
-        <div className='flex justify-center items-center min-h-screen'>
+        <div>
+        <Header />
+
             <div className='container flex flex-col justify-center items-center'>
-                <h1 className='text-5xl font-extrabold tracking-tight text-slate-900 sm:text-7xl text-center'>
-                    Whisper Web
-                </h1>
-                <h2 className='mt-3 mb-5 px-4 text-center text-1xl font-semibold tracking-tight text-slate-900 sm:text-2xl'>
-                    ML-powered speech recognition directly in your browser
-                </h2>
+            
+            <h1 className='font-semibold text-5xl sm:text-6l md:text-7xl'>Quick<span className='text-red-300 bold'>Script</span></h1>
+
+            <h3 className='font-medium md:text-lg'>Upload <span className='text-red-300'> <i className="fa-solid fa-upload"></i></span>
+            <span className='font-medium md:text-lg'> &rarr;</span>
+            {" "}Transcribe <span className='text-red-300'> <i className="fa-solid fa-pen-nib"> </i> </span> <span className='font-medium md:text-lg'> &rarr;</span>
+            {" "}Download <span className='text-red-300'> <i className="fa-solid fa-file-arrow-down"></i></span>
+            </h3>
+
+            <h3 className='font-small md:text-sm'> Create fast and easy subtitles for your videos</h3>
+            <br/>
+
                 <AudioManager transcriber={transcriber} />
                 <Transcript transcribedData={transcriber.output} />
+                
             </div>
 
-            <div className='absolute bottom-4'>
-                Made with{" "}
-                <a
-                    className='underline'
-                    href='https://github.com/xenova/transformers.js'
-                >
-                    🤗 Transformers.js
-                </a>
-            </div>
+            
+            <Footer />
         </div>
     );
 }
