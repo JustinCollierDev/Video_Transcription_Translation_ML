@@ -134,15 +134,17 @@ export enum AudioSource {
 
 export function AudioManager(props: { transcriber: Transcriber }) {
     const [progress, setProgress] = useState<number | undefined>(undefined);
+
     const [audioData, setAudioData] = useState<
-        | {
-              buffer: AudioBuffer;
-              url: string;
-              source: AudioSource;
-              mimeType: string;
-          }
-        | undefined
-    >(undefined);
+    | {
+          buffer?: AudioBuffer | null;
+          url: string;
+          source: AudioSource;
+          mimeType: string;
+      }
+    | undefined
+>(undefined);
+
     const [audioDownloadUrl, setAudioDownloadUrl] = useState<
         string | undefined
     >(undefined);
@@ -290,43 +292,48 @@ export function AudioManager(props: { transcriber: Transcriber }) {
             </div>
             {audioData && (
                 <>
-                    <AudioPlayer
-                        audioUrl={audioData.url}
-                        mimeType={audioData.mimeType}
+    <AudioPlayer
+        audioUrl={audioData.url}
+        mimeType={audioData.mimeType}
+    />
+
+    <div className='relative w-full flex justify-center items-center'>
+        <TranscribeButton
+            onClick={() => {
+                if (audioData.buffer) {
+                    props.transcriber.start(audioData.buffer);
+                } else {
+                    console.error("Audio buffer is null.");
+                    // Optionally handle the error or provide feedback to the user
+                }
+            }}
+            isModelLoading={props.transcriber.isModelLoading}
+            isTranscribing={props.transcriber.isBusy}
+        />
+
+        <SettingsTile
+            className='absolute right-4'
+            transcriber={props.transcriber}
+            icon={<SettingsIcon />}
+        />
+    </div>
+    {props.transcriber.progressItems.length > 0 && (
+        <div className='relative z-10 p-4 w-full'>
+            <label>
+                Loading model files... (only run once)
+            </label>
+            {props.transcriber.progressItems.map((data) => (
+                <div key={data.file}>
+                    <Progress
+                        text={data.file}
+                        percentage={data.progress}
                     />
+                </div>
+            ))}
+        </div>
+    )}
+</>
 
-                    <div className='relative w-full flex justify-center items-center'>
-                        <TranscribeButton
-                            onClick={() => {
-                                props.transcriber.start(audioData.buffer);
-                            }}
-                            isModelLoading={props.transcriber.isModelLoading}
-                            // isAudioLoading ||
-                            isTranscribing={props.transcriber.isBusy}
-                        />
-
-                        <SettingsTile
-                            className='absolute right-4'
-                            transcriber={props.transcriber}
-                            icon={<SettingsIcon />}
-                        />
-                    </div>
-                    {props.transcriber.progressItems.length > 0 && (
-                        <div className='relative z-10 p-4 w-full'>
-                            <label>
-                                Loading model files... (only run once)
-                            </label>
-                            {props.transcriber.progressItems.map((data) => (
-                                <div key={data.file}>
-                                    <Progress
-                                        text={data.file}
-                                        percentage={data.progress}
-                                    />
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </>
             )}
         </>
     );

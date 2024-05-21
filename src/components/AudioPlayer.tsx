@@ -5,15 +5,18 @@ export default function AudioPlayer(props: {
     mimeType: string;
 }) {
     const audioPlayer = useRef<HTMLAudioElement>(null);
-    const audioSource = useRef<HTMLSourceElement>(null);
 
     // Updates src when url changes
     useEffect(() => {
-        if (audioPlayer.current && audioSource.current) {
-            audioSource.current.src = props.audioUrl;
-            audioPlayer.current.load();
+        if (audioPlayer.current) {
+            audioPlayer.current.src = props.audioUrl;
         }
     }, [props.audioUrl]);
+
+    // Error handling
+    const handleError = () => {
+        console.error("Failed to load audio:", audioPlayer.current?.error);
+    };
 
     return (
         <div className='flex relative z-10 p-4 w-full'>
@@ -21,8 +24,9 @@ export default function AudioPlayer(props: {
                 ref={audioPlayer}
                 controls
                 className='w-full h-14 rounded-lg bg-white shadow-xl shadow-black/5 ring-1 ring-slate-700/10'
+                onError={handleError}
             >
-                <source ref={audioSource} type={props.mimeType}></source>
+                {/* Optionally, you can add <source> here if needed */}
             </audio>
         </div>
     );
