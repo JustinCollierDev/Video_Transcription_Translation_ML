@@ -7,13 +7,15 @@ const YouTubeToMp3: React.FC = () => {
 
     const handleConvert = async () => {
         try {
-            const response = await axios.get('http://localhost:3000/youtube', {
-                params: { url },
+            const encodedUrl = encodeURIComponent(url);
+            const response = await axios.get(`http://localhost:3001/convert?url=${encodedUrl}`, {
                 responseType: 'blob',
             });
+    
             setMp3Data(response.data);
         } catch (error) {
             console.error('Error converting video:', error);
+            alert('Failed to convert video. Please check the URL and try again.');
         }
     };
 
