@@ -203,35 +203,51 @@ export function AudioManager(props: { transcriber: Transcriber }) {
 
     // Downloading via URL, or in our case, YouTube link
     const downloadAudioFromUrl = async (
-        requestAbortController: AbortController,
-    ) => {
-        if (audioDownloadUrl) {
-            try {
-                // Call the YouTubeToMp3 component to convert the URL to an MP3 file
-                const response = await axios.get(`http://localhost:3001/convert?url=${encodeURIComponent(audioDownloadUrl)}`, {
-                    responseType: 'blob',
-                    signal: requestAbortController.signal,
-                });
-    
-                // Create a blob URL for the converted MP3 audio data
-                const audioBlob = new Blob([response.data], { type: 'audio/mpeg' });
-                const audioUrl = URL.createObjectURL(audioBlob);
-    
-                // Set the audio data in the state
-                setAudioData({
-                    buffer: null, // Set buffer as null for streaming playback
-                    url: audioUrl,
-                    source: AudioSource.URL,
-                    mimeType: 'audio/mpeg', // Set the mimeType as per the converted audio format
-                });
-            } catch (error) {
-                console.error('Failed to download audio:', error);
-                // Handle error appropriately
-            } finally {
-                setProgress(undefined);
-            }
+    requestAbortController: AbortController
+) => {
+    if (audioDownloadUrl) {
+        try {
+            const fileReader = new FileReader();
+            // Call the YouTubeToMp3 component to convert the URL to an MP3 file
+            const response = await axios.get(`http://localhost:3001/convert?url=${encodeURIComponent(audioDownloadUrl)}`, {
+                responseType: 'blob',
+                signal: requestAbortController.signal,
+            });
+
+            // Create a blob URL for the converted MP3 audio data
+            const audioBlob = new Blob([response.data], { type: 'audio/mpeg' });
+            const audioUrl = URL.createObjectURL(response.data);
+
+            // Convert Blob to ArrayBuffer
+            const arrayBuffer = await audioBlob.arrayBuffer();
+
+            // Create an AudioContext
+            const audioContext = new AudioContext(
+                {
+                    sampleRate: Constants.SAMPLING_RATE,
+                }
+            );
+
+            // Decode the ArrayBuffer to an AudioBuffer
+            const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+            // Set the audio data in the state
+            setAudioData({
+                buffer: audioBuffer, // Provide the AudioBuffer for playback
+                url: audioUrl,
+                source: AudioSource.URL,
+                mimeType: 'audio/mpeg', // Set the mimeType as per the converted audio format
+            });
+
+            fileReader.readAsArrayBuffer(response.data);
+        } catch (error) {
+            console.error('Failed to download audio:', error);
+            // Handle error appropriately
+        } finally {
+            setProgress(undefined);
         }
-    };
+    }
+};
 
     // When URL changes, download audio
     useEffect(() => {
@@ -250,7 +266,7 @@ export function AudioManager(props: { transcriber: Transcriber }) {
                 <div className='flex flex-row space-x-2 py-2 w-full px-2'>
                     <UrlTile
                         icon={<AnchorIcon />}
-                        text={"(WIP) YouTube URL"}
+                        text={"YouTube URL"}
                         onUrlUpdate={(e) => {
                             props.transcriber.onInputChange();
                             setAudioDownloadUrl(e);
@@ -300,6 +316,7 @@ export function AudioManager(props: { transcriber: Transcriber }) {
     <div className='relative w-full flex justify-center items-center'>
         <TranscribeButton
             onClick={() => {
+
                 if (audioData.buffer) {
                     props.transcriber.start(audioData.buffer);
                 } else {
