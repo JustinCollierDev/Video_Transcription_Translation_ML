@@ -1,7 +1,6 @@
 import { AudioManager } from "./components/AudioManager";
 import Transcript from "./components/Transcript";
 import { useTranscriber } from "./hooks/useTranscriber";
-import YouTubeToMp3 from './components/YouTubeToMp3';
 
 import Header from './components/header'
 import Footer from './components/footer'
@@ -28,8 +27,6 @@ function App() {
 
                 <AudioManager transcriber={transcriber} />
                 <Transcript transcribedData={transcriber.output} />
-
-                <YouTubeToMp3 />
                 
             </div>
 
