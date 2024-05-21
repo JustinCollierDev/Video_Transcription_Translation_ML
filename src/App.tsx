@@ -28,8 +28,6 @@ function App() {
 
                 <AudioManager transcriber={transcriber} />
                 <Transcript transcribedData={transcriber.output} />
-
-                <YouTubeToMp3 />
                 
             </div>
 

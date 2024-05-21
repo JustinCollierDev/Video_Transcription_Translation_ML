@@ -205,27 +205,26 @@ export function AudioManager(props: { transcriber: Transcriber }) {
     ) => {
         if (audioDownloadUrl) {
             try {
-                setAudioData(undefined);
-                setProgress(0);
-                const { data, headers } = (await axios.get(audioDownloadUrl, {
+                // Call the YouTubeToMp3 component to convert the URL to an MP3 file
+                const response = await axios.get(`http://localhost:3001/convert?url=${encodeURIComponent(audioDownloadUrl)}`, {
+                    responseType: 'blob',
                     signal: requestAbortController.signal,
-                    responseType: "arraybuffer",
-                    onDownloadProgress(progressEvent) {
-                        setProgress(progressEvent.progress || 0);
-                    },
-                })) as {
-                    data: ArrayBuffer;
-                    headers: { "content-type": string };
-                };
-
-                let mimeType = headers["content-type"];
-                if (!mimeType || mimeType === "audio/wave") {
-                    mimeType = "audio/wav";
-                }
-                
-                setAudioFromDownload(data, mimeType);
+                });
+    
+                // Create a blob URL for the converted MP3 audio data
+                const audioBlob = new Blob([response.data], { type: 'audio/mpeg' });
+                const audioUrl = URL.createObjectURL(audioBlob);
+    
+                // Set the audio data in the state
+                setAudioData({
+                    buffer: null, // Set buffer as null for streaming playback
+                    url: audioUrl,
+                    source: AudioSource.URL,
+                    mimeType: 'audio/mpeg', // Set the mimeType as per the converted audio format
+                });
             } catch (error) {
-                console.log("Request failed or aborted", error);
+                console.error('Failed to download audio:', error);
+                // Handle error appropriately
             } finally {
                 setProgress(undefined);
             }

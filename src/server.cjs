@@ -1,7 +1,6 @@
 const express = require('express');
 const ytdl = require('ytdl-core');
-const ffmpeg = require('fluent-ffmpeg');
-const stream = require('stream');
+const { spawn } = require('child_process');
 const cors = require('cors');
 
 const app = express();
@@ -11,41 +10,48 @@ const port = 3001;
 app.use(cors());
 
 app.get('/convert', async (req, res) => {
+    console.log('GET request received');
     const videoUrl = req.query.url;
+    console.log('Video URL:', videoUrl);
     if (!videoUrl) {
+        console.log('No URL provided');
         return res.status(400).send('No URL provided');
     }
 
     try {
-        const videoStream = ytdl(videoUrl, { filter: 'audioonly' });
+        // Spawn FFmpeg process
+        const ffmpegProcess = spawn('ffmpeg', [
+            '-i', 'pipe:0',         // Input from stdin
+            '-f', 'mp3',            // Output format
+            'pipe:1',               // Output to stdout
+        ]);
 
-        // Create a writable stream to collect the ffmpeg output
-        const audioStream = new stream.Writable();
-        const audioData = [];
-
-        audioStream._write = (chunk, encoding, next) => {
-            audioData.push(chunk);
-            next();
-        };
-
-        audioStream.on('finish', () => {
-            // Convert the collected audio data array to a Buffer
-            const audioBuffer = Buffer.concat(audioData);
-
-            // Set response headers
-            res.set({
-                'Content-Type': 'audio/mpeg',
-                'Content-Length': audioBuffer.length
-            });
-
-            // Send the audio Buffer as the response
-            res.end(audioBuffer);
+        // Set response headers
+        res.set({
+            'Content-Type': 'audio/mpeg',
+            'Transfer-Encoding': 'chunked',
         });
 
-        // Pipe the video stream through ffmpeg to the audio stream
-        videoStream.pipe(ffmpeg().format('mp3')).pipe(audioStream);
+        // Pipe video stream to FFmpeg stdin and FFmpeg stdout to response stream
+        ytdl(videoUrl, { filter: 'audioonly' }).pipe(ffmpegProcess.stdin);
+        ffmpegProcess.stdout.pipe(res);
+
+        // Handle FFmpeg process errors
+        ffmpegProcess.stderr.on('data', (data) => {
+            console.error(`FFmpeg stderr: ${data}`);
+        });
+
+        ffmpegProcess.on('close', (code) => {
+            if (code !== 0) {
+                console.error(`FFmpeg process exited with code ${code}`);
+                res.status(500).send('Error converting video');
+            } else {
+                console.log('Conversion completed successfully');
+            }
+        });
 
     } catch (error) {
+        console.error('Error converting video:', error);
         res.status(500).send(`Error converting video: ${error.message}`);
     }
 });

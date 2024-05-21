@@ -3,19 +3,23 @@ import axios from 'axios';
 
 const YouTubeToMp3: React.FC = () => {
     const [url, setUrl] = useState('');
-    const [mp3Data, setMp3Data] = useState<Blob | null>(null);
+    const [mp3Url, setMp3Url] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
 
     const handleConvert = async () => {
+        setLoading(true);
         try {
-            const encodedUrl = encodeURIComponent(url);
-            const response = await axios.get(`http://localhost:3001/convert?url=${encodedUrl}`, {
-                responseType: 'blob',
+            const response = await axios.get('http://localhost:3001/convert', {
+                params: {
+                    url: url
+                }
             });
-    
-            setMp3Data(response.data);
+            setMp3Url(response.data.mp3Url);
         } catch (error) {
             console.error('Error converting video:', error);
             alert('Failed to convert video. Please check the URL and try again.');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -28,13 +32,15 @@ const YouTubeToMp3: React.FC = () => {
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder="Enter YouTube URL"
             />
-            <button onClick={handleConvert}>Convert</button>
+            <button onClick={handleConvert} disabled={loading}>Convert</button>
 
-            {mp3Data && (
-                <audio controls>
-                    <source src={URL.createObjectURL(mp3Data)} type="audio/mpeg" />
-                    Your browser does not support the audio element.
-                </audio>
+            {loading && <p>Converting...</p>}
+
+            {mp3Url && (
+                <div>
+                    <p>MP3 URL:</p>
+                    <a href={mp3Url} download="converted.mp3">Download MP3</a>
+                </div>
             )}
         </div>
     );
