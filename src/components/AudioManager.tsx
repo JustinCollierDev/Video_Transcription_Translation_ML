@@ -264,6 +264,9 @@ export function AudioManager(props: { transcriber: Transcriber }) {
         <>
             <div className='flex flex-col justify-center items-center rounded-lg bg-white shadow-xl shadow-black/5 ring-1 ring-slate-700/10'>
                 <div className='flex flex-row space-x-2 py-2 w-full px-2'>
+
+                    {/* YouTube Link Button */ }
+                    {/*
                     <UrlTile
                         icon={<AnchorIcon />}
                         text={"YouTube URL"}
@@ -272,6 +275,8 @@ export function AudioManager(props: { transcriber: Transcriber }) {
                             setAudioDownloadUrl(e);
                         }}
                     />
+                    */}
+
                     <VerticalBar />
                     <FileTile
                         icon={<FolderIcon />}
