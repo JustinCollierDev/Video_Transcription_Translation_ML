@@ -1,15 +1,13 @@
 import express from 'express';
+import ytdl from 'ytdl-core';
+import { spawn } from 'child_process';
 import cors from 'cors';
-import Zencoder from 'zencoder';
 
 const app = express();
 const port = 3001;
 
 // Enable CORS for all routes
 app.use(cors());
-
-// Initialize Zencoder client with your API key
-const client = new Zencoder('414b2d85f6fd0dfea3d3c1227ba0af9d');
 
 app.get('/convert', async (req, res) => {
     console.log('GET request received');
@@ -21,24 +19,37 @@ app.get('/convert', async (req, res) => {
     }
 
     try {
-        // Create a Zencoder job
-        client.Job.create({
-            input: videoUrl,
-            outputs: [
-                { label: 'mp3', format: 'mp3', audio_bitrate: 128 }
-            ]
-        }, (err, data) => {
-            if (err) {
-                console.error('Error creating Zencoder job:', err);
+        // Spawn FFmpeg process
+        const ffmpegProcess = spawn('ffmpeg', [
+            '-i', 'pipe:0',         // Input from stdin
+            '-f', 'mp3',            // Output format
+            'pipe:1',               // Output to stdout
+        ]);
+
+        // Set response headers
+        res.set({
+            'Content-Type': 'audio/mpeg',
+            'Transfer-Encoding': 'chunked',
+        });
+
+        // Pipe video stream to FFmpeg stdin and FFmpeg stdout to response stream
+        ytdl(videoUrl, { filter: 'audioonly' }).pipe(ffmpegProcess.stdin);
+        ffmpegProcess.stdout.pipe(res);
+
+        // Handle FFmpeg process errors
+        ffmpegProcess.stderr.on('data', (data) => {
+            console.error(`FFmpeg stderr: ${data}`);
+        });
+
+        ffmpegProcess.on('close', (code) => {
+            if (code !== 0) {
+                console.error(`FFmpeg process exited with code ${code}`);
                 res.status(500).send('Error converting video');
             } else {
-                console.log('Zencoder job created successfully:', data);
-
-                // Redirect to the transcoded MP3 URL
-                const mp3Url = data.outputs[0].url;
-                res.redirect(mp3Url);
+                console.log('Conversion completed successfully');
             }
         });
+
     } catch (error) {
         console.error('Error converting video:', error);
         res.status(500).send(`Error converting video: ${error.message}`);

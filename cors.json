@@ -1,9 +1,0 @@
-[
-    {
-        "AllowedOrigins": ["http://localhost:5173", "https://quickscript.netlify.app"],
-        "AllowedMethods": ["GET"],
-        "AllowedHeaders": ["*"],
-        "ExposeHeaders": [],
-        "MaxAgeSeconds": 3000
-    }
-]

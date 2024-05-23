@@ -1,5 +1,0 @@
-[[headers]]
-  for = "/*.xml"
-  [headers.values]
-    Access-Control-Allow-Headers = "X-Requested-With"
-    Access-Control-Allow-Origin = "https://admin.brightcove.com"
