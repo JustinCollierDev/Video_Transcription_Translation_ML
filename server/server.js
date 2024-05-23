@@ -1,7 +1,7 @@
-const express = require('express');
-const ytdl = require('ytdl-core');
-const { spawn } = require('child_process');
-const cors = require('cors');
+import express from 'express';
+import ytdl from 'ytdl-core';
+import { spawn } from 'child_process';
+import cors from 'cors';
 
 const app = express();
 const port = 3001;
