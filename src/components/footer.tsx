@@ -11,10 +11,9 @@ import {
 const Footer = memo(() => {
   return (
     <MDBFooter className='bg-dark text-center text-white'>
-      <MDBContainer className='p-4 pb-0'>
-        <section className='mb-4'>
 
-          <MDBBtn
+      <div>
+      <MDBBtn
             floating
             className='m-1'
             style={{ backgroundColor: '#ac2bac' }}
@@ -46,10 +45,11 @@ const Footer = memo(() => {
           >
             <MDBIcon fab icon='github' />
           </MDBBtn>
-        </section>
-      </MDBContainer>
+      </div>
 
       <div className='text-center p-3' style={{ backgroundColor: 'rgba(1, 0, 0, 0.2)' }}>
+      
+
         Justin Collier - Personal Portfolio Project - 2024
 
         <div>

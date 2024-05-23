@@ -309,6 +309,7 @@ export function AudioManager(props: { transcriber: Transcriber }) {
                     />
                 }
             </div>
+            <div><br/><h3 className='font-small md:text-sm'>Note: YouTube button only works locally. Please download the project to use this.</h3></div>
             {audioData && (
                 <>
     <AudioPlayer
