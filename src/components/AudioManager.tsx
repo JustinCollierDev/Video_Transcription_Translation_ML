@@ -260,6 +260,19 @@ export function AudioManager(props: { transcriber: Transcriber }) {
         }
     }, [audioDownloadUrl]);
 
+    // CSS events
+    const handleMouseOver = (event: React.MouseEvent<HTMLSpanElement>) => {
+        (event.target as HTMLSpanElement).style.color = 'grey';
+    };
+
+    const handleMouseOut = (event: React.MouseEvent<HTMLSpanElement>) => {
+        (event.target as HTMLSpanElement).style.color = 'rgb(252 115 115)';
+    };
+
+    const handleClick = () => {
+        window.location.href = 'https://github.com/JustinCollierDev/Video_Transcription_Translation_ML','_blank';
+    };
+
     return (
         <>
             <div className='flex flex-col justify-center items-center rounded-lg bg-white shadow-xl shadow-black/5 ring-1 ring-slate-700/10'>
@@ -309,7 +322,19 @@ export function AudioManager(props: { transcriber: Transcriber }) {
                     />
                 }
             </div>
-            <div><br/><h3 className='font-small md:text-sm'>Note: YouTube button only works locally. Please download the project to use this.</h3></div>
+            <div><br/><h3 className='font-small md:text-sm'>Note: YouTube button only works locally due to CORS restrictions. </h3> 
+            <h3 className='font-small md:text-sm textAlign:center align:center'> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            Please download the project 
+            <span 
+            style={{ color: 'rgb(252 115 115)', cursor: 'pointer' }} 
+            onMouseOver={handleMouseOver}
+            onMouseOut={handleMouseOut}
+            onClick={handleClick}
+            >
+             {" "}here{" "}
+            </span>
+            
+             to use this feature.</h3></div>
             {audioData && (
                 <>
     <AudioPlayer
